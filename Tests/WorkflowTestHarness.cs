@@ -170,9 +170,18 @@ internal static class WorkflowTestHarness
 
     private static void SetLtxv2ModelClass(WorkflowGenerator g)
     {
-        if (T2IModelClassSorter.ModelClasses.TryGetValue("lightricks-ltx-video-2", out T2IModelClass ltxv2Class))
+        // Tests don't run the full SwarmUI bootstrap, so T2IModelClassSorter.ModelClasses may be uninitialized.
+        // For workflow generation, all we need is a ModelClass with the LTXV2 compat class ID.
+        var ltxv2Class = new T2IModelClass
         {
-            g.FinalLoadedModel = new T2IModel(null!, "", "", "ltxv2-test") { ModelClass = ltxv2Class };
-        }
+            ID = "lightricks-ltx-video-2",
+            Name = "Lightricks LTX Video 2 (Test)",
+            CompatClass = T2IModelClassSorter.CompatLtxv2,
+            StandardWidth = 960,
+            StandardHeight = 960,
+            IsThisModelOfClass = (_, _) => false
+        };
+
+        g.FinalLoadedModel = new T2IModel(null!, "", "", "ltxv2-test") { ModelClass = ltxv2Class };
     }
 }

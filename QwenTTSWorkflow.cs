@@ -510,6 +510,7 @@ internal static class QwenTTSWorkflow
             throw new SwarmReadableErrorException("only one <audio> section is supported.");
         }
 
+        section = result.Trim();
         return true;
     }
 

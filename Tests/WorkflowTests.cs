@@ -102,6 +102,39 @@ public class WorkflowTests
     }
 
     [Fact]
+    public void Audio_only_dialogue_inference_wires_role_bank()
+    {
+        var voices = new JArray(
+            Voice("custom", "Serena", referenceText: "Reference A", styleInstruction: "Style A", speaker: "Serena"),
+            Voice("custom", "Alexander", referenceText: "Reference B", styleInstruction: "Style B", speaker: "Serena")
+        );
+
+        const string prompt = """
+<audio>
+Serena: Knock, knock.
+Alexander: Who’s there?
+Serena: Control freak.
+Alexander: Control freak
+Serena: Okay, now you say “Control freak who?”
+""";
+        const string expectedScript = """
+Serena: Knock, knock.
+Alexander: Who’s there?
+Serena: Control freak.
+Alexander: Control freak
+Serena: Okay, now you say “Control freak who?”
+""";
+
+        JObject workflow = GenerateAudioWorkflow(prompt, voices);
+
+        (string roleBankId, _) = SingleNodeOfType(workflow, "FB_Qwen3TTSRoleBank");
+        JObject dialogueNode = SingleNodeOfType(workflow, "FB_Qwen3TTSDialogueInference").Node;
+
+        Assert.Equal(new JArray(roleBankId, 0), RequireConnection(dialogueNode, "role_bank"));
+        Assert.Equal(expectedScript, dialogueNode["inputs"]?["script"]?.ToString());
+    }
+
+    [Fact]
     public void Video_dialogue_inference_hands_off_to_audio_length_to_frames()
     {
         var voices = new JArray(
@@ -181,6 +214,7 @@ public class WorkflowTests
 
     private static JObject GenerateAudioWorkflow(string prompt, JArray voices)
     {
+        var qwenSteps = WorkflowTestHarness.QwenTTSSteps();
         var input = new T2IParamInput(null);
         input.Set(T2IParamTypes.Prompt, prompt);
         input.Set(QwenTTSExtension.QwenTTSVoices, voices.ToString());
@@ -188,13 +222,14 @@ public class WorkflowTests
 
         IEnumerable<WorkflowGenerator.WorkflowGenStep> steps =
             new[] { WorkflowTestHarness.MinimalGraphSeedStep() }
-                .Concat(WorkflowTestHarness.QwenTTSSteps());
+                .Concat(qwenSteps);
 
         return WorkflowTestHarness.GenerateWithSteps(input, steps);
     }
 
     private static JObject GenerateTextToVideoWorkflow(string prompt, JArray voices)
     {
+        var qwenSteps = WorkflowTestHarness.QwenTTSSteps();
         var input = new T2IParamInput(null);
         input.Set(T2IParamTypes.Prompt, prompt);
         input.Set(QwenTTSExtension.QwenTTSVoices, voices.ToString());
@@ -203,13 +238,14 @@ public class WorkflowTests
 
         IEnumerable<WorkflowGenerator.WorkflowGenStep> steps =
             new[] { WorkflowTestHarness.MinimalGraphSeedStep(), WorkflowTestHarness.Ltx2TextToVideoSeedStep() }
-                .Concat(WorkflowTestHarness.QwenTTSSteps());
+                .Concat(qwenSteps);
 
         return WorkflowTestHarness.GenerateWithSteps(input, steps);
     }
 
     private static JObject GenerateImageToVideoWorkflow(string prompt, JArray voices)
     {
+        var qwenSteps = WorkflowTestHarness.QwenTTSSteps();
         var input = new T2IParamInput(null);
         input.Set(T2IParamTypes.Prompt, prompt);
         input.Set(QwenTTSExtension.QwenTTSVoices, voices.ToString());
@@ -218,7 +254,7 @@ public class WorkflowTests
 
         IEnumerable<WorkflowGenerator.WorkflowGenStep> steps =
             new[] { WorkflowTestHarness.MinimalGraphSeedStep(), WorkflowTestHarness.Ltx2ImageToVideoSeedStep() }
-                .Concat(WorkflowTestHarness.QwenTTSSteps());
+                .Concat(qwenSteps);
 
         return WorkflowTestHarness.GenerateWithSteps(input, steps);
     }

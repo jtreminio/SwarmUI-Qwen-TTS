@@ -1,0 +1,13 @@
+{
+  "name": "swarmui-qwen3tts-extension",
+  "version": "1.0.0",
+  "description": "Qwen-TTS extension for SwarmUI - multi-character dialogue audio workflows",
+  "private": true,
+  "scripts": {
+    "build": "npm run clean && node node_modules/typescript/bin/tsc",
+    "clean": "rm -f Assets/qwentts.js Assets/qwentts.js.map"
+  },
+  "devDependencies": {
+    "typescript": "^5.9"
+  }
+}

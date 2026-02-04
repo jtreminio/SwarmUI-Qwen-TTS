@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <AssemblyName>SwarmUI-Qwen-TTS</AssemblyName>
+  </PropertyGroup>
+
+  <Import Project="../../SwarmUI.extension.props" />
+
+  <ItemGroup>
+    <Compile Remove="Tests/**/*.cs" />
+    <Compile Remove="**/._*" />
+  </ItemGroup>
+
+</Project>

@@ -22,14 +22,12 @@
     <ProjectReference Include="..\..\..\SwarmUI.csproj">
       <Properties>_EnableMacOSCodeSign=false</Properties>
     </ProjectReference>
+    <ProjectReference Include="..\SwarmUI-Qwen-TTS.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\QwenTTSExtension.cs" Link="QwenTTSExtension.cs" />
-    <Compile Include="..\QwenTTSWorkflow.cs" Link="QwenTTSWorkflow.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Compile Remove="bin/**/*.cs" />
+    <Compile Remove="obj/**/*.cs" />
     <Compile Remove="**/._*" />
   </ItemGroup>
 

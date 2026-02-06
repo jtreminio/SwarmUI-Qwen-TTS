@@ -10,7 +10,7 @@ Properties/
 .dotnet/
 .aspnet/
 .local/
-Tests/Directory.Build.props
+**/Directory.Build.local.props
 __pycache__
 
 # Node / TypeScript

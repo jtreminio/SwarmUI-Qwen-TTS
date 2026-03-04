@@ -45,8 +45,8 @@ public class QwenTTSExtension : Extension
         ComfyUISelfStartBackend.CustomNodePaths.Add(nodeFolder);
         Logs.Init($"Qwen-TTS: added {nodeFolder} to ComfyUI CustomNodePaths");
 
-        WorkflowGenerator.AddStep(g => QwenTTSWorkflow.RunForAudio(g), -20);
-        WorkflowGenerator.AddStep(g => QwenTTSWorkflow.RunForVideo(g), 15);
+        WorkflowGenerator.AddStep(g => new Runner(g).Run(isForAudio: true), -20);
+        WorkflowGenerator.AddStep(g => new Runner(g).Run(isForAudio: false), 15);
     }
 
     private void InstallComfyUIQwenTTSNodes()

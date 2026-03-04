@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwarmUI-Qwen-TTS.Tests", "Tests\\SwarmUI-Qwen-TTS.Tests.csproj", "{54E6B6E9-40A7-4D2E-9F7B-1326A10A25E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7557}") = "SwarmUI-Qwen-TTS.Tests", "Tests\\SwarmUI-Qwen-TTS.Tests.csproj", "{54E6B6E9-40A7-4D2E-9F7B-1326A10A25E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwarmUI-Qwen-TTS", "SwarmUI-Qwen-TTS.csproj", "{7B9F7D1A-9F9E-4C1C-8C7B-7F2A5A3D6B10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7557}") = "SwarmUI-Qwen-TTS", "SwarmUI-Qwen-TTS.csproj", "{7B9F7D1A-9F9E-4C1C-8C7B-7F2A5A3D6B10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using SwarmUI.Builtin_ComfyUIBackend;
 using SwarmUI.Text2Image;
@@ -58,11 +56,10 @@ internal static class WorkflowTestHarness
             _ = g.CreateNode("UnitTest_Model", new JObject(), id: "4", idMandatory: false);
             _ = g.CreateNode("UnitTest_Latent", new JObject(), id: "10", idMandatory: false);
 
-            g.FinalModel = ["4", 0];
-            g.FinalClip = ["4", 1];
-            g.FinalVae = ["4", 2];
-            g.FinalSamples = ["10", 0];
-            g.FinalImageOut = null;
+            g.CurrentModel = new WGNodeData(["4", 0], g, WGNodeData.DT_MODEL, g.CurrentCompat());
+            g.CurrentTextEnc = new WGNodeData(["4", 1], g, WGNodeData.DT_TEXTENC, g.CurrentCompat());
+            g.CurrentVae = new WGNodeData(["4", 2], g, WGNodeData.DT_VAE, g.CurrentCompat());
+            g.CurrentMedia = new WGNodeData(["10", 0], g, WGNodeData.DT_LATENT_IMAGE, g.CurrentCompat());
             g.FinalLoadedModel = null;
             g.FinalLoadedModelList = [];
         }, -1000);
@@ -70,15 +67,17 @@ internal static class WorkflowTestHarness
     public static WorkflowGenerator.WorkflowGenStep Ltx2TextToVideoSeedStep() =>
         new(g =>
         {
+            SetLtxv2ModelClass(g);
+
             string audioVaeId = g.CreateNode("UnitTest_AudioVAE", new JObject(), id: "101", idMandatory: false);
-            g.FinalAudioVae = new JArray(audioVaeId, 0);
+            g.CurrentAudioVae = new WGNodeData([audioVaeId, 0], g, WGNodeData.DT_AUDIOVAE, g.CurrentCompat());
 
             string emptyAudioId = g.CreateNode("LTXVEmptyLatentAudio", new JObject
             {
                 ["batch_size"] = 1,
                 ["frames_number"] = 97,
                 ["frame_rate"] = 24,
-                ["audio_vae"] = g.FinalAudioVae
+                ["audio_vae"] = g.CurrentAudioVae.Path
             }, id: "102", idMandatory: false);
 
             string emptyVideoId = g.CreateNode("EmptyLTXVLatentVideo", new JObject
@@ -94,22 +93,22 @@ internal static class WorkflowTestHarness
                 ["video_latent"] = new JArray(emptyVideoId, 0),
                 ["audio_latent"] = new JArray(emptyAudioId, 0)
             }, id: "104", idMandatory: false);
-
-            SetLtxv2ModelClass(g);
         }, -999);
 
     public static WorkflowGenerator.WorkflowGenStep Ltx2ImageToVideoSeedStep() =>
         new(g =>
         {
+            SetLtxv2ModelClass(g);
+
             string audioVaeId = g.CreateNode("UnitTest_AudioVAE", new JObject(), id: "201", idMandatory: false);
-            g.FinalAudioVae = new JArray(audioVaeId, 0);
+            g.CurrentAudioVae = new WGNodeData([audioVaeId, 0], g, WGNodeData.DT_AUDIOVAE, g.CurrentCompat());
 
             string emptyAudioId = g.CreateNode("LTXVEmptyLatentAudio", new JObject
             {
                 ["batch_size"] = 1,
                 ["frames_number"] = 120,
                 ["frame_rate"] = 24,
-                ["audio_vae"] = g.FinalAudioVae
+                ["audio_vae"] = g.CurrentAudioVae.Path
             }, id: "202", idMandatory: false);
 
             string emptyVideoId = g.CreateNode("EmptyLTXVLatentVideo", new JObject
@@ -139,8 +138,6 @@ internal static class WorkflowTestHarness
                 ["video_latent"] = new JArray(i2vId, 0),
                 ["audio_latent"] = new JArray(emptyAudioId, 0)
             }, id: "208", idMandatory: false);
-
-            SetLtxv2ModelClass(g);
         }, -999);
 
     public static JObject GenerateWithSteps(T2IParamInput input, IEnumerable<WorkflowGenerator.WorkflowGenStep> steps)

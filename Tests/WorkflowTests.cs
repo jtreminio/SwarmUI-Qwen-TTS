@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+
 using Newtonsoft.Json.Linq;
 using SwarmUI.Builtin_ComfyUIBackend;
 using SwarmUI.Text2Image;
@@ -96,7 +95,7 @@ public class WorkflowTests
         JObject workflow = GenerateAudioWorkflow("global <audio>Serena: Hello", voices);
 
         (string Id, JObject Node) dialogue = SingleNodeOfType(workflow, "FB_Qwen3TTSDialogueInference");
-        JObject saveNode = SingleNodeOfType(workflow, "SwarmSaveAudioWS").Node;
+        JObject saveNode = SingleNodeOfType(workflow, "SaveAudioMP3").Node;
 
         Assert.Equal(new JArray(dialogue.Id, 0), RequireConnection(saveNode, "audio"));
     }
